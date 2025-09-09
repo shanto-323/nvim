@@ -1,0 +1,3 @@
+-- ALL PLUGINS
+return {
+}
