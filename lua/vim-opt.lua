@@ -1,22 +1,22 @@
 vim.cmd("set expandtab")
-vim.cmd("set relativenumber")
-vim.cmd("set tabstop=2")
+vim.cmd("set tabstop=4")
 vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
+vim.cmd("set linespace=2")
+vim.cmd("set number")
 vim.g.mapleader = " "
 vim.opt.cursorline = true
 vim.o.updatetime = 150
+vim.opt.list = true
+
+vim.opt.backupcopy = "yes"
 
 
-vim.api.nvim_create_autocmd("CursorHold", {
-  pattern = "*",
-  callback = function()
-    vim.diagnostic.open_float(nil, {
-      focusable = false, -- float is not focusable
-      close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-      border = "rounded",
-      source = "always", -- show source of diagnostic
-      prefix = "",       -- no prefix symbol
-    })
-  end,
+vim.diagnostic.config({
+    virtual_text = true, -- Show inline error text
+    underline = true,    -- Show underline under errors
+    signs = true,        -- Show signs in gutter
+    update_in_insert = false,
+    float = { border = "single" }
 })
+

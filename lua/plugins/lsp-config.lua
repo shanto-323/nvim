@@ -9,7 +9,18 @@ return {
     "williamboman/mason-lspconfig.nvim",
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "gopls", "lua_ls", "clangd" },
+        ensure_installed = {
+          "gopls",
+          "lua_ls",
+          "clangd",
+          "kotlin_language_server",
+          "html",
+          "jsonls",
+          "buf_ls",
+          "dockerls",
+          "docker_compose_language_service",
+          "nginx_language_server",
+        },
         automatic_installation = true,
       })
     end,
@@ -78,8 +89,47 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function()
-      vim.keymap.set("n", "I", vim.lsp.buf.hover, {})
-      vim.keymap.set("n", "II", vim.lsp.buf.definition, {})
+      -- Optional: global float border style for consistency (affects diagnostics, hover, etc.)
+      vim.api.nvim_set_hl(0, "FloatBorder", { link = "NormalFloat" }) -- or customize color
+
+      local border = {
+        { "╭", "FloatBorder" },
+        { "─", "FloatBorder" },
+        { "╮", "FloatBorder" },
+        { "│", "FloatBorder" },
+        { "╯", "FloatBorder" },
+        { "─", "FloatBorder" },
+        { "╰", "FloatBorder" },
+        { "│", "FloatBorder" },
+      }
+
+      -- Apply rounded border to hover
+      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+        vim.lsp.handlers.hover, {
+          border = border, -- or simply "rounded" (see below)
+          -- max_width = 80,        -- optional: limit width
+          -- max_height = 20,
+        }
+      )
+
+      -- Apply same border style to diagnostics float (your K mapping)
+      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+        vim.lsp.handlers.signature_help, {
+          border = border,
+        }
+      )
+
+      -- Your keymaps (unchanged, but now hover should have border)
+      vim.keymap.set("n", "I", function()
+        vim.lsp.buf.hover({ border = "rounded" })     -- ← border here!
+      end, { desc = "LSP Hover" })
+      vim.keymap.set("n", "II", vim.lsp.buf.definition, { desc = "LSP Definition" })
+      vim.keymap.set("n", "K", vim.diagnostic.open_float, { desc = "Diagnostics Float" })
+
+      -- Optional: nicer diagnostic float too
+      vim.diagnostic.config({
+        float = { border = "rounded" },
+      })
     end,
   },
 }
